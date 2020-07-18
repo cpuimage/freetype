@@ -68,14 +68,13 @@
 # . `CMakeLists.txt' is provided as-is since it is normally not used by the
 #   developer team.
 #
-# . Set the `FT_WITH_ZLIB', `FT_WITH_BZIP2', `FT_WITH_PNG',
+# . Set the `FT_WITH_ZLIB', `FT_WITH_BZIP2',
 #   `FT_WITH_HARFBUZZ', and `FT_WITH_BROTLI' CMake variables to `ON' to
 #   force using a dependency.  Leave a variable undefined (which is the
 #   default) to use the dependency only if it is available. Example:
 #
 #     cmake -B build -D FT_WITH_ZLIB=ON \
 #                    -D FT_WITH_BZIP2=ON \
-#                    -D FT_WITH_PNG=ON \
 #                    -D FT_WITH_HARFBUZZ=ON \
 #                    -D FT_WITH_BROTLI=ON [...]
 #
@@ -85,7 +84,6 @@
 #
 #     cmake -B build -D CMAKE_DISABLE_FIND_PACKAGE_ZLIB=TRUE \
 #                    -D CMAKE_DISABLE_FIND_PACKAGE_BZip2=TRUE \
-#                    -D CMAKE_DISABLE_FIND_PACKAGE_PNG=TRUE \
 #                    -D CMAKE_DISABLE_FIND_PACKAGE_HarfBuzz=TRUE \
 #                    -D CMAKE_DISABLE_FIND_PACKAGE_BrotliDec=TRUE [...]
 #
@@ -172,7 +170,6 @@ set(LIBRARY_VERSION "${LIBRARY_SOVERSION}.${LIBTOOL_AGE}.${LIBTOOL_REVISION}")
 # of this file, for how to force or disable dependencies completely.
 option(FT_WITH_ZLIB "Use system zlib instead of internal library." OFF)
 option(FT_WITH_BZIP2 "Support bzip2 compressed fonts." OFF)
-option(FT_WITH_PNG "Support PNG compressed OpenType embedded bitmaps." OFF)
 option(FT_WITH_HARFBUZZ "Improve auto-hinting of OpenType fonts." OFF)
 option(FT_WITH_BROTLI "Support compressed WOFF2 fonts." OFF)
 
@@ -212,11 +209,7 @@ else ()
   find_package(HarfBuzz ${HARFBUZZ_MIN_VERSION})
 endif ()
 
-if (FT_WITH_PNG)
-  find_package(PNG REQUIRED)
-else ()
-  find_package(PNG)
-endif ()
+
 
 if (FT_WITH_ZLIB)
   find_package(ZLIB REQUIRED)
@@ -288,11 +281,6 @@ endif ()
 if (BZIP2_FOUND)
   string(REGEX REPLACE
     "/\\* +(#define +FT_CONFIG_OPTION_USE_BZIP2) +\\*/" "\\1"
-    FTOPTION_H "${FTOPTION_H}")
-endif ()
-if (PNG_FOUND)
-  string(REGEX REPLACE
-    "/\\* +(#define +FT_CONFIG_OPTION_USE_PNG) +\\*/" "\\1"
     FTOPTION_H "${FTOPTION_H}")
 endif ()
 if (HARFBUZZ_FOUND)
@@ -458,12 +446,6 @@ if (BZIP2_FOUND)
   target_link_libraries(freetype PRIVATE ${BZIP2_LIBRARIES})
   target_include_directories(freetype PRIVATE ${BZIP2_INCLUDE_DIR}) # not BZIP2_INCLUDE_DIRS
   list(APPEND PKG_CONFIG_REQUIRED_PRIVATE "bzip2")
-endif ()
-if (PNG_FOUND)
-  target_link_libraries(freetype PRIVATE ${PNG_LIBRARIES})
-  target_compile_definitions(freetype PRIVATE ${PNG_DEFINITIONS})
-  target_include_directories(freetype PRIVATE ${PNG_INCLUDE_DIRS})
-  list(APPEND PKG_CONFIG_REQUIRED_PRIVATE "libpng")
 endif ()
 if (HARFBUZZ_FOUND)
   target_link_libraries(freetype PRIVATE ${HARFBUZZ_LIBRARIES})

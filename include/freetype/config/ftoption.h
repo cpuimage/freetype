@@ -274,7 +274,7 @@ FT_BEGIN_HEADER
    *   here with the configured one.
    */
   /* ANDROID: enabled */
-/* #define FT_CONFIG_OPTION_USE_PNG */
+#define FT_CONFIG_OPTION_USE_PNG
 
 
   /**************************************************************************
